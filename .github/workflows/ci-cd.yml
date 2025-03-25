@@ -55,3 +55,17 @@ jobs:
     - name: Push Docker Image
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
+
+    - name: Deploy to Server
+      run: |
+        ssh user@your-server-ip << EOF
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker pull $DOCKER_USERNAME/simple-java-app:${{ steps.version.outputs.version }}
+          docker stop app || true && docker rm app || true
+          docker run -d --name app -p 80:8080 $DOCKER_USERNAME/simple-java-app:${{ steps.version.outputs.version }}
+        EOF
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
