@@ -82,5 +82,5 @@ jobs:
         EOF
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        EC2_USER: ${{ vars.EC2_USER }}
-        EC2_HOST: ${{ vars.EC2_HOST }}
+        EC2_USER_NAME: ${{ vars.EC2_USER }}
+        EC2_HOSTS: ${{ vars.EC2_HOST }}
