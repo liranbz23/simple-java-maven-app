@@ -31,7 +31,6 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-
     - name: Update pom.xml to match tag version
       run: |
         mvn versions:set -DnewVersion=${{ steps.version.outputs.version }}
