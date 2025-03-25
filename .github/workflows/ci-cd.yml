@@ -13,14 +13,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Bump Patch Version (Git Tag)
+    - name: Bump Version
       id: bump
-      uses: phips28/gh-action-bump-version@v9.0.2
+      uses: nnichols/maven-version-bump-action@v3
       with:
-        tag-prefix: ''
-        default: patch
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ secrets.github_token }}
 
     - name: Extract new version from tag
       id: version
