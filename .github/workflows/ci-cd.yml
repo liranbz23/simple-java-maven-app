@@ -19,6 +19,7 @@ jobs:
       with:
         github-token: ${{ secrets.github_token }}
 
+
     - name: Extract new version from tag
       id: version
       run: |
