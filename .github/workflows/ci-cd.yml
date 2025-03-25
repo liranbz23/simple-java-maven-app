@@ -62,7 +62,7 @@ jobs:
         chmod 600 key.pem
         echo "Connecting to: $EC2_USER@$EC2_HOST"
 
-        ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@$3.65.36.162 << 'EOF'
+        ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@3.65.36.162 << 'EOF'
           # Install Docker if it's missing
           if ! command -v docker &> /dev/null; then
             echo "Installing Docker..."
