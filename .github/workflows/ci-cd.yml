@@ -61,14 +61,18 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
         chmod 600 key.pem
 
-        ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@3.65.36.162 << EOF
-          
-          # --- Install Docker ---
-          sudo apt update
-          sudo apt install -y docker.io
-          sudo usermod -aG docker $USER
-          newgrp docker
+        ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} << EOF
 
+        # Install Docker if it's missing
+        if ! command -v docker &> /dev/null; then
+          echo "Installing Docker..."
+          sudo apt update -y
+          sudo apt install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+          sudo usermod -aG docker $EC2_USER
+        fi
+          
           # --- Start Docker if needed ---
           sudo systemctl enable docker
           sudo systemctl start docker
