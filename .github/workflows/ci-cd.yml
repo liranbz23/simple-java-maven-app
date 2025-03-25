@@ -58,7 +58,10 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh ubuntu@3.65.36.162 << EOF
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
+        chmod 600 key.pem
+
+        ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@3.65.36.162 << EOF
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker pull $DOCKER_USERNAME/simple-java-app:${{ steps.version.outputs.version }}
           docker stop app || true && docker rm app || true
