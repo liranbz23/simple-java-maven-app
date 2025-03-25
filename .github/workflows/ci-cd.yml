@@ -60,6 +60,7 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
+        echo "Connecting to: $EC2_USER@$EC2_HOST"
 
         ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $EC2_USER@$EC2_HOST << 'EOF'
           # Install Docker if it's missing
