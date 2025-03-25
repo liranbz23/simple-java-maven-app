@@ -58,7 +58,7 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh user@your-server-ip << EOF
+        ssh ubuntu@3.65.36.162 << EOF
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker pull $DOCKER_USERNAME/simple-java-app:${{ steps.version.outputs.version }}
           docker stop app || true && docker rm app || true
