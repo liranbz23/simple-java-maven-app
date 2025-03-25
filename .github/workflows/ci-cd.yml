@@ -15,7 +15,7 @@ jobs:
 
     - name: Bump Patch Version (Git Tag)
       id: bump
-      uses: phips28/gh-action-bump-version@v10
+      uses: phips28/gh-action-bump-version@v11.0.7
       with:
         tag-prefix: ''
         default: patch
