@@ -61,7 +61,7 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
-        ssh -i SSH_PRIVATE_KEY -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $EC2_USER@$EC2_HOST << EOF
+        ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $EC2_USER@$EC2_HOST << 'EOF'
           # Install Docker if it's missing
           if ! command -v docker &> /dev/null; then
             echo "Installing Docker..."
@@ -73,17 +73,13 @@ jobs:
           fi
 
           # Deploy the app
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-          docker pull $DOCKER_USERNAME/simple-java-app:${VERSION}
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+          docker pull ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
           docker stop app || true
           docker rm app || true
-          docker run -d --name app -p 80:8080 $DOCKER_USERNAME/simple-java-app:${VERSION}
+          docker run -d --name app -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
         EOF
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         EC2_USER: ${{ vars.EC2_USER }}
         EC2_HOST: ${{ vars.EC2_HOST }}
-        VERSION: ${{ steps.version.outputs.version }}
-
