@@ -62,6 +62,17 @@ jobs:
         chmod 600 key.pem
 
         ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@3.65.36.162 << EOF
+          
+          # --- Install Docker ---
+          sudo apt update
+          sudo apt install -y docker.io
+          sudo usermod -aG docker $USER
+          newgrp docker
+
+          # --- Start Docker if needed ---
+          sudo systemctl enable docker
+          sudo systemctl start docker
+          
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker pull $DOCKER_USERNAME/simple-java-app:${{ steps.version.outputs.version }}
           docker stop app || true && docker rm app || true
