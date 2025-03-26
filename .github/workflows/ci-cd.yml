@@ -28,8 +28,13 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
-    
+      
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0 #fetch tags also
+
     - name: Bump Version
       id: bump
       uses: nnichols/maven-version-bump-action@v3
