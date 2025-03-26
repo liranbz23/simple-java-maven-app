@@ -5,26 +5,15 @@ on:
     branches:
       - master
 
+
 jobs:
-  build-and-push:
+
+  test:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-
-    - name: Bump Version
-      id: bump
-      uses: nnichols/maven-version-bump-action@v3
-      with:
-        github-token: ${{ secrets.github_token }}
-
-
-    - name: Extract new version from tag
-      id: version
-      run: |
-        VERSION=$(git describe --tags)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
 
     - name: Set up Java
       uses: actions/setup-java@v3
@@ -32,14 +21,31 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Run Tests
+      run: mvn test
+
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Bump Version
+      id: bump
+      uses: nnichols/maven-version-bump-action@v3
+      with:
+        github-token: ${{ secrets.github_token }}
+  
+    - name: Extract new version from tag
+      id: version
+      run: |
+        VERSION=$(git describe --tags)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
 
     - name: Update pom.xml to match tag version
       run: |
         mvn versions:set -DnewVersion=${{ steps.version.outputs.version }}
         mvn versions:commit
-
-    - name: Run Tests
-      run: mvn test
       
     - name: Build JAR
       run: mvn clean package
@@ -55,7 +61,12 @@ jobs:
     - name: Push Docker Image
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
 
+    steps:
     - name: Deploy to EC2
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
