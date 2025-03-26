@@ -28,7 +28,9 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
-      
+    outputs:
+      version: ${{ steps.version.outputs.version }}  
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -70,6 +72,14 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      EC2_USER_NAME: ${{ secrets.EC2_USER_NAME }}
+      EC2_HOSTS: ${{ secrets.EC2_HOSTS }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      VERSION: ${{ needs.build.outputs.version }}
+    
 
     steps:
     - name: Deploy to EC2
@@ -95,5 +105,4 @@ jobs:
           sudo docker rm app || true
           sudo docker run --name app ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
         EOF
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
