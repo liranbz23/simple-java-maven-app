@@ -99,10 +99,10 @@ jobs:
           fi
 
           # Deploy the app
-          sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
+          sudo docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+          sudo docker pull $DOCKER_USERNAME/simple-java-app:$VERSION
           sudo docker stop app || true
           sudo docker rm app || true
-          sudo docker run --name app ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
+          sudo docker run --name app $DOCKER_USERNAME/simple-java-app:$VERSION
         EOF
 
