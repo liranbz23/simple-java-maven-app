@@ -43,14 +43,10 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          organization: liranbz23
-          projectKey: liranbz23
+      - name: Build and Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
-
+        run: mvn clean verify sonar:sonar -Dsonar.projectKey=your-org_project -Dsonar.organization=your-org -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_CLOUD_TOKEN }}
 
   dependency-scan:
     needs: test
