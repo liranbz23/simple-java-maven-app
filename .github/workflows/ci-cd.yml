@@ -24,6 +24,34 @@ jobs:
     - name: Run Tests
       run: mvn test
 
+  static-analysis:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Sonar packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          organization: your-org
+          projectKey: your-org_project
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
+
+
   dependency-scan:
     needs: test
     name: Dependency Scan
@@ -40,7 +68,7 @@ jobs:
         run: snyk test --severity-threshold=critical
 
   build:
-    needs: test
+    needs: dependency-scan
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}  
