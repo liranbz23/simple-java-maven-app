@@ -116,6 +116,13 @@ jobs:
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }} .
 
+    - name: Sign Docker Image
+      env:
+        COSIGN_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      run: cosign sign --key env://COSIGN_KEY ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
+
+
     - name: Push Docker Image
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
@@ -133,6 +140,11 @@ jobs:
     
 
     steps:
+    - name: Verify Docker Image
+      env:
+        COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
+      run: cosign verify --key env://COSIGN_PUBLIC_KEY ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
+    
     - name: Deploy to EC2
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
