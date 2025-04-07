@@ -76,6 +76,7 @@ jobs:
       with: 
         fetch-depth: 0 #fetch tags also
 
+
     - name: Bump Version
       id: bump
       uses: nnichols/maven-version-bump-action@v3
