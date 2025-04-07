@@ -46,7 +46,7 @@ jobs:
       - name: Build and Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
-        run: mvn clean verify sonar:sonar -Dsonar.projectKey=your-org_project -Dsonar.organization=your-org -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_CLOUD_TOKEN }}
+        run: mvn clean verify sonar:sonar -Dsonar.projectKey=liranbz23_simple-java-maven-app -Dsonar.organization=liranbz23 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_CLOUD_TOKEN }}
 
   dependency-scan:
     needs: test
