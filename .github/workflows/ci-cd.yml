@@ -132,7 +132,7 @@ jobs:
       env:
         COSIGN_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      run: cosign sign --key env://COSIGN_KEY ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
+      run: cosign sign --yes --key env://COSIGN_KEY ${{ secrets.DOCKER_USERNAME }}/simple-java-app:${{ steps.version.outputs.version }}
 
   
   deploy:
